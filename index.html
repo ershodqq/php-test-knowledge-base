@@ -6,14 +6,14 @@
   <title>База знаний — Тестовое задание (PHP)</title>
   <style>
     :root {
-      --bg: #0f172a;           /* slate-900 */
-      --panel: #111827;        /* gray-900 */
-      --panel-2: #0b1220;      /* slightly darker */
-      --text: #e5e7eb;         /* gray-200 */
-      --muted: #9ca3af;        /* gray-400 */
-      --accent: #60a5fa;       /* blue-400 */
-      --selected: #fff3b0;     /* soft yellow highlight per spec */
-      --border: #1f2937;       /* gray-800 */
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #0b1220;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #60a5fa;
+      --selected: #fff3b0;
+      --border: #1f2937;
     }
 
     * { box-sizing: border-box; }
@@ -66,7 +66,7 @@
       border-bottom: 1px solid var(--border);
       font-size: 15px;
       letter-spacing: 0.4px;
-      color: #dbeafe; /* blue-100 */
+      color: #dbeafe;
       background: linear-gradient(180deg, rgba(96,165,250,0.12), rgba(96,165,250,0.02));
     }
 
@@ -98,7 +98,6 @@
     .item:active { transform: translateY(1px); }
     .item .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); opacity: .8; }
 
-    /* yellow highlight per the spec */
     .item.selected { background: var(--selected); color: #1f2937; border-color: #d4b106; }
     .item.selected .dot { background: #b58100; }
 
@@ -115,8 +114,8 @@
       font-size: 12px;
       letter-spacing: 0.3px;
       color: #0b1220;
-      background: #fde68a; /* amber-200 */
-      border: 1px solid #f59e0b; /* amber-500 */
+      background: #fde68a;
+      border: 1px solid #f59e0b;
     }
 
     .content h3 { margin: 14px 0 8px; font-size: 20px; }
@@ -129,7 +128,6 @@
       .panel { min-height: auto; }
     }
 
-    /* Focus ring for keyboard users */
     .item:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
   </style>
 </head>
@@ -152,39 +150,29 @@
 
     <section class="panel" aria-label="Содержание">
       <h2>Содержание</h2>
-      <div class="content" id="content">
-        <!-- сюда выводится текст -->
-      </div>
+      <div class="content" id="content"></div>
     </section>
   </main>
 
   <script>
-    /**
-     * Данные по ТЗ: 2 темы, по 3 подтемы в каждой.
-     * Контент — «Некий текст, привязанный к Подтеме X».
-     */
     const DATA = {
       'Тема 1': ['Подтема 1.1', 'Подтема 1.2', 'Подтема 1.3'],
       'Тема 2': ['Подтема 2.1', 'Подтема 2.2', 'Подтема 2.3']
     };
 
-    // Ссылки на DOM
     const topicsEl = document.getElementById('topics');
     const subtopicsEl = document.getElementById('subtopics');
     const contentEl = document.getElementById('content');
 
-    // Текущее состояние
     let currentTopic = 'Тема 1';
     let currentSubtopic = 'Подтема 1.1';
 
-    // Инициализация по умолчанию (Тема 1 → Подтема 1.1)
     document.addEventListener('DOMContentLoaded', () => {
       renderTopics();
       renderSubtopics();
       renderContent();
     });
 
-    /** Рендер тем и навешивание обработчиков */
     function renderTopics() {
       topicsEl.innerHTML = '';
       Object.keys(DATA).forEach(topic => {
@@ -195,24 +183,16 @@
         li.setAttribute('aria-label', topic);
         li.dataset.topic = topic;
         li.innerHTML = `<span class="dot" aria-hidden="true"></span><span>${topic}</span>`;
-
         li.addEventListener('click', onTopicClick);
-        li.addEventListener('keypress', (e) => { if (e.key === 'Enter' || e.key === ' ') onTopicClick.call(li, e); });
-
+        li.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') onTopicClick.call(li, e); });
         topicsEl.appendChild(li);
       });
     }
 
-    /** Рендер подтем для выбранной темы */
     function renderSubtopics() {
       subtopicsEl.innerHTML = '';
       const subs = DATA[currentTopic] || [];
-
-      // Если текущая подтема не относится к новой теме — переключить на первый элемент
-      if (!subs.includes(currentSubtopic)) {
-        currentSubtopic = subs[0] || '';
-      }
-
+      if (!subs.includes(currentSubtopic)) currentSubtopic = subs[0] || '';
       subs.forEach(sub => {
         const li = document.createElement('li');
         li.className = 'item' + (sub === currentSubtopic ? ' selected' : '');
@@ -221,15 +201,12 @@
         li.setAttribute('aria-label', sub);
         li.dataset.subtopic = sub;
         li.innerHTML = `<span class="dot" aria-hidden="true"></span><span>${sub}</span>`;
-
         li.addEventListener('click', onSubtopicClick);
-        li.addEventListener('keypress', (e) => { if (e.key === 'Enter' || e.key === ' ') onSubtopicClick.call(li, e); });
-
+        li.addEventListener('keypress', e => { if (e.key === 'Enter' || e.key === ' ') onSubtopicClick.call(li, e); });
         subtopicsEl.appendChild(li);
       });
     }
 
-    /** Вывод содержания для выбранной подтемы */
     function renderContent() {
       const text = `Некий текст, привязанный к ${currentSubtopic}`;
       contentEl.innerHTML = `
@@ -240,12 +217,10 @@
       `;
     }
 
-    /** Обработчики */
     function onTopicClick() {
       const selected = this.dataset.topic;
       if (!selected || selected === currentTopic) return;
       currentTopic = selected;
-      // по ТЗ: при смене темы — первая её подтема
       currentSubtopic = (DATA[currentTopic] && DATA[currentTopic][0]) || '';
       renderTopics();
       renderSubtopics();
